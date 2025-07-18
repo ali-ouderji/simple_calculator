@@ -1,43 +1,27 @@
+%%writefile calculator_app.py
 import streamlit as st
 
-st.set_page_config(page_title="Python Calculator", layout="centered")
 st.title("🧮 Python Calculator App")
 
-# Store the current expression in session state
-if "expression" not in st.session_state:
-    st.session_state.expression = ""
+# User input
+num1 = st.number_input("Enter the first number", format="%.2f")
+op = st.selectbox("Choose an operation", ["+", "-", "*", "/"])
+num2 = st.number_input("Enter the second number", format="%.2f")
 
-# Display the current expression
-st.text_input("Display", st.session_state.expression, key="display", disabled=True)
-
-# Button layout
-buttons = [
-    ["7", "8", "9", "/"],
-    ["4", "5", "6", "*"],
-    ["1", "2", "3", "-"],
-    ["0", ".", "C", "+"],
-    ["=",]
-]
-
-# Function to update expression
-def press(button):
-    if button == "C":
-        st.session_state.expression = ""
-    elif button == "=":
-        try:
-            result = eval(st.session_state.expression)
-            st.session_state.expression = str(round(result, 6))
-        except ZeroDivisionError:
-            st.session_state.expression = "❌ Division by zero!"
-        except:
-            st.session_state.expression = "❌ Error"
+# Perform calculation
+if st.button("Calculate"):
+    if op == '+':
+        result = num1 + num2
+    elif op == '-':
+        result = num1 - num2
+    elif op == '*':
+        result = num1 * num2
+    elif op == '/':
+        if num2 != 0:
+            result = num1 / num2
+        else:
+            result = "❌ Error: Division by zero!"
     else:
-        st.session_state.expression += button
+        result = "❌ Invalid operator!"
 
-# Create the buttons
-for row in buttons:
-    cols = st.columns(len(row))
-    for i, button in enumerate(row):
-        if cols[i].button(button):
-            press(button)
-
+    st.success(f"Result: {result}")
